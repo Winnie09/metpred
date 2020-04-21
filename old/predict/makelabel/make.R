@@ -1,0 +1,6 @@
+d <- readRDS('/home-4/zji4@jhu.edu/scratch/metpred/data/mearray/beta.rds')
+set.seed(12345)
+trainid <- sample(colnames(d),110)
+testid <- setdiff(colnames(d),trainid)
+saveRDS(trainid,file='/home-4/zji4@jhu.edu/scratch/metpred/res/predict/label/trainid.rds')
+saveRDS(testid,file='/home-4/zji4@jhu.edu/scratch/metpred/res/predict/label/testid.rds')

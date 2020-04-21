@@ -1,0 +1,5 @@
+beta <- readRDS('/home-4/zji4@jhu.edu/scratch/metpred/data/mearray/beta.rds')
+m <- rowMeans(beta)
+sd <- apply(beta,1,sd)
+saveRDS(m,file='/home-4/zji4@jhu.edu/scratch/metpred/data/mearray/beta_mean.rds')
+saveRDS(sd,file='/home-4/zji4@jhu.edu/scratch/metpred/data/mearray/beta_sd.rds') 
