@@ -1,27 +1,33 @@
 library(SMUT)
-trainmodel <- function(expr,meth) {
+trainmodel <- function(expr,meth, log.transform = TRUE, filter.low.express.gene = TRUE, filter.low_var.gene = TRUE) {
   set.seed(12345)
   library(data.table)
   library(fastcluster)
   
   # avoid 0 and 1 to enter logit function
-  meth[meth==0] <- min(meth[meth>0])
-  meth[meth==1] <- max(meth[meth<1])
-  meth <- log(meth/(1-meth))
+  if (log.transform){
+    meth[meth==0] <- min(meth[meth>0])
+    meth[meth==1] <- max(meth[meth<1])
+    meth <- log(meth/(1-meth))
+  }
   
   # Filtering low expressed genes and quantile normalization
-  expr <- expr[rowMeans(expr > 0) >= 0.1,]
+  if (filter.low.express.gene){
+    expr <- expr[rowMeans(expr > 0) >= 0.1,]
+  }
   qnem <- rowMeans(apply(expr,2,function(i) sort(i)))
   gn <- row.names(expr)
   expr <- apply(expr,2,function(i) qnem[frank(i,ties.method='min')])
   row.names(expr) <- gn
   
   # Filtering low variable genes
-  m <- rowMeans(expr)
-  s <- sqrt((rowMeans(expr*expr) - m^2) * ncol(expr)/(ncol(expr)-1))
-  mod <- loess(s~m)
-  expr <- expr[resid(mod) > 0,]
-  
+  if (filter.low_var.gene){
+    m <- rowMeans(expr)
+    s <- sqrt((rowMeans(expr*expr) - m^2) * ncol(expr)/(ncol(expr)-1))
+    mod <- loess(s~m)
+    expr <- expr[resid(mod) > 0,]
+  }
+    
   # Gene standardization and clustering
   m <- rowMeans(expr)
   s <- sqrt((rowMeans(expr*expr) - m^2) * ncol(expr)/(ncol(expr)-1))
@@ -91,3 +97,4 @@ trainmodel <- function(expr,meth) {
   row.names(expr) <- sub('\\..*','',row.names(expr))
   list(beta=beta,trainexpr=expr,genecluster=gclu,trainxmean=cluexprmean,trainxsd=cluexprsd,trainymean=unname(trainymean),trainysd=unname(trainysd),lambda=lambda)
 }
+
