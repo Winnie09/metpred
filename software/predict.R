@@ -1,4 +1,5 @@
 predict <- function(expr,model,impute=F) {
+  # impute: impute the genes that are in training set but not in prediction set.
   library(data.table)
   library(SMUT)
 
