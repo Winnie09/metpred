@@ -20,8 +20,18 @@ theme_hm <- function(method_vec) {
 }
 
 pdir <- '/home-4/whou10@jhu.edu/scratch/Wenpin/metpred/nullsimu/plot/'
-pdf(paste0(pdir, 'num.fp.pdf'), height = 5, width = 3.5)
+pdf(paste0(pdir, 'num.fp.pdf'), height = 4.5, width = 3)
 ggplot() + geom_tile(data=pd,aes(x=Data,y=Method,fill=Num.FP)) + theme_hm(pd$Method) +
   scale_fill_gradientn(colors=rev(brewer.pal(9,'YlGnBu')))  + 
   xlab('') + ylab('')
 dev.off()
+
+pdf(paste0(pdir, 'num_fp_voilin.pdf'), height = 4, width = 6)
+ggplot(data=pd) + 
+  geom_violin(aes(x=Method, y=Num.FP, fill = Method), alpha = 0.2, scale = 'width') + 
+  geom_jitter(aes(x = Method, y = Num.FP, color = Data), width=0.25, alpha=0.5) +
+  xlab('') + ylab('log10(Num.FP+1)')+
+  theme_classic()
+dev.off()
+  
+
