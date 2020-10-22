@@ -7,7 +7,7 @@ rdir2 <- '/home-4/whou10@jhu.edu/work-zfs/whou10/metpred/simu/perf/perf/'
 pdir <- '/home-4/whou10@jhu.edu/work-zfs/whou10/metpred/simu/plot/plot/'
 pddir <- '/home-4/whou10@jhu.edu/work-zfs/whou10/metpred/simu/plot/pd/'
 af <- list.files(ddir1)
-af <- af[!af %in% c('4_200_0.3_0.5')]
+#af <- af[!af %in% c('4_200_0.3_0.5')]
 library(parallel)
 tmp <- lapply(af, function(f){
   if (!file.exists(paste0(rdir2, f, '.rds'))){
