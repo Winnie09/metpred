@@ -1,8 +1,16 @@
-pdir <- '/home-4/whou10@jhu.edu/work-zfs/whou10/metpred/simu/plot/plot/'
-pddir <- '/home-4/whou10@jhu.edu/work-zfs/whou10/metpred/simu/plot/pd/'
+pdir <- '/home-4/whou10@jhu.edu/work-zfs/whou10/metpred/simuseed/plot/plot/'
+seed = 1
+pd1 <- lapply(1:100, function(seed){
+  pddir <- paste0('/home-4/whou10@jhu.edu/work-zfs/whou10/metpred/simuseed/plot/pd/', seed, '/')
+  readRDS(paste0(pddir, 'perf_fdrdiff.rds')) ######### caution
+})
+pd1 <- do.call(rbind, pd1)  
 
-pd1 <- readRDS(paste0(pddir, 'perf_fdrdiff.rds')) ######### caution
-pd2 <- readRDS(paste0(pddir, 'perf_auc.rds')) ######### caution
+pd2 <- lapply(1:100, function(seed){
+  pddir <- paste0('/home-4/whou10@jhu.edu/work-zfs/whou10/metpred/simuseed/plot/pd/', seed, '/')
+  readRDS(paste0(pddir, 'perf_auc.rds')) ######### caution
+})
+pd2 <- do.call(rbind, pd2)  
 
 library(ggplot2)
 p1 <- ggplot(data = pd1, aes(x = method, y = performance, fill = method)) + 
@@ -13,7 +21,7 @@ p1 <- ggplot(data = pd1, aes(x = method, y = performance, fill = method)) +
   ylab('FDR.Diff') + xlab('')+
   scale_fill_brewer(palette = 'Set1')
 p2 <- ggplot(data = pd2, aes(x = method, y = performance, fill = method)) + 
-  geom_violin(alpha = 0.3, scale = 'width')+
+  geom_boxplot(alpha = 0.3)+
   theme_classic()+
   theme(legend.position = 'none') +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
