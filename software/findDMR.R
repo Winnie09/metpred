@@ -138,3 +138,20 @@ library(lmerTest)
   res[order(res[,'pvalue'],-abs(res[,'stat'])),]
 }
 
+func[['BSmooth_saver']] <- function(expr.=expr, sample.=sample,samplename.=samplename,group.=group) {
+  sampsum <- sapply(samplename,function(us) rowMeans(expr[,sample==us,drop=F]))
+  id1 <- which(group==1)
+  id2 <- which(group==2)
+  pval <- t(apply(sampsum,1,function(i) {
+    if (length(unique(i[id1])) == 1 & length(unique(i[id2])) == 1) {
+      c(1,0)
+    } else {
+      tmp <- t.test(i[id1],i[id2])
+      c(tmp$p.value,tmp$statistic)
+    }
+  }))
+  fdr <- p.adjust(pval[,1],method='fdr')
+  res <- data.frame(Gene=row.names(pval),pvalue=pval[,1],FDR=fdr,stat=pval[,2],stringsAsFactors = F)
+  res[order(res[,'pvalue'],-abs(res[,'stat'])),]
+}
+
