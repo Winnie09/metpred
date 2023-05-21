@@ -1,10 +1,40 @@
-trainmodel <- function(expr,meth) {
+expr = readRDS('/home/whou10/data/whou/metpred/software_test/rna_encode_sub_20.rds')
+expr = expr[1:2e3,]
+meth = readRDS('/home/whou10/data/whou/metpred/software_test/wgbs_encode_sub_20.rds')
+meth[is.na(meth)] = 0
+str(expr)
+str(meth)
+
+trainexpr <- expr[,1:11]
+testexpr <- expr[,12:20]
+trainmeth <- meth[,1:11]
+testmeth <- meth[,12:20]
+
+rm('expr')
+rm('meth')
+
+
+trainmodel <- function(trainexpr,testexpr,trainmeth) {
   library(data.table)
   library(fastcluster)
   
-  meth[meth==0] <- min(meth[meth>0])
-  meth[meth==1] <- max(meth[meth<1])
-  meth <- log(meth/(1-meth))
+  trainmeth <- trainmeth[,colnames(trainexpr)]
+  trainmeth[trainmeth==0] <- min(trainmeth[trainmeth>0])
+  trainmeth[trainmeth==1] <- max(trainmeth[trainmeth<1])
+  
+  trainmeth <- log(trainmeth/(1-trainmeth))
+  
+  int <- intersect(rownames(trainexpr),rownames(testexpr))
+  trainexpr <- trainexpr[int,]
+  testexpr <- testexpr[int,]
+  colnames(trainexpr) <- paste0('train_',1:ncol(trainexpr))
+  colnames(testexpr) <- paste0('test_',1:ncol(testexpr))
+  
+  expr <- cbind(trainexpr,testexpr)
+  
+  qnem <- rowMeans(apply(expr,2,function(i) sort(i)))
+  expr <- apply(expr,2,function(i) qnem[frank(i)])
+  
   
   ### cross validation
   set.seed(12345)
@@ -60,7 +90,7 @@ trainmodel <- function(expr,meth) {
       }
     }
   }
- print(perf) 
+  print(perf) 
   perf <- aggregate(perf[,3],list(perf[,1],perf[,2]),mean)
   
   cn <- perf[which.min(perf[,3]),1]
@@ -98,5 +128,6 @@ trainmodel <- function(expr,meth) {
   row.names(expr) <- sub('\\..*','',row.names(expr))
   list(beta=beta,trainexpr=expr,genecluster=gclu,trainxmean=cluexprmean,trainxsd=cluexprsd,trainymean=unname(trainymean),trainysd=unname(trainysd))
 }
+
 
 

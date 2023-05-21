@@ -1,5 +1,6 @@
 predict <- function(expr,model,impute=F) {
   # impute: impute the genes that are in training set but not in prediction set.
+	
   library(data.table)
   library(SMUT)
 
@@ -54,8 +55,10 @@ predict <- function(expr,model,impute=F) {
   testx[is.na(testx)] <- 0
   pred <- eigenMapMatMult(model$beta, t(testx))
   pred <- pred * model$trainysd + model$trainymean
-  pred <- exp(pred)
-  pred <- pred/(1+pred)
+  #pred <- exp(pred)
+  #pred <- pred/(1+pred)
+  pred[pred > 1] <- 1
+  pred[pred < 0] <- 0
   row.names(pred) <- row.names(model$beta)
   colnames(pred) <- colnames(expr)
   pred
