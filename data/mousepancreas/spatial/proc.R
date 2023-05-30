@@ -6,6 +6,7 @@ load('seurat_adm_spatial_for_ji_lab.rda')
 meta <- adm.combined@meta.data
 meta <- meta[rownames(norm_weights),]
 
+## wgbs and visium samples names not the same, here we match them.
 samp <- as.character(meta$sample)
 samp[samp=='D2_A29_P_K4'] <- 'A29_M_P_K4_D2'
 samp[samp=='D2_A34_P_K4'] <- 'A34_M_P_K4_D2'
@@ -18,7 +19,7 @@ samp[samp=='D7_A47_P_K4'] <- 'A47_F_P_K4_D7'
 samp[samp=='D7_A66_P_K4'] <- 'A66_M_P_K4_D7'
 samp[samp=='D7_A72_LM'] <- 'A72_F_LM_D7'
 
-
+## save the normalized expression and the deconvoluted celltype weights
 m <- adm.combined@assays$Spatial@data
 m <- m[,rownames(norm_weights)]
 
