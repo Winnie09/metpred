@@ -1,4 +1,5 @@
 i <- as.character(commandArgs(trailingOnly = T))
+print(i)
 
 if (file.exists(paste0('/home/whou10/data/whou/metpred/evaluate/mousepancreas/pred/ramp/',i,'.rds'))){
   stop('File exists. ')
@@ -55,8 +56,12 @@ names(rs2) <- names(rs)
 
 for (rs2.s in unique(rs2)){
   print(rs2.s)
+  if (file.exists(paste0('/home/whou10/data/whou/metpred/evaluate/mousepancreas/pred/ramp/',i,'/testsd_cpg_', which(levels(rs2) == rs2.s), '.rds'))){
+    next
+  } 
   pred <- trainpredict(trainexpr=r[,trainid],testexpr=e,trainmeth=w[names(rs2)[which(rs2 == rs2.s)], trainid])
   saveRDS(pred,file=paste0('/home/whou10/data/whou/metpred/evaluate/mousepancreas/pred/ramp/',i,'/testsd_cpg_', which(levels(rs2) == rs2.s), '.rds'))
 }
+
 
 
