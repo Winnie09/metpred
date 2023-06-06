@@ -80,7 +80,7 @@ cc <- do.call(cbind, cclist)
 cc <- reshape2::melt(cc)
 str(cc)
 
-pdf(paste0(pdir, 'allsamples_pcc.pdf'),width=5,height=3)
+pdf(paste0(pdir, 'allsamples_pcc.pdf'),width=4.5,height=3)
 print(ggplot(cc,aes(y=value,x=Var2,fill=Var2)) + 
         geom_violin(alpha=0.2, scale = 'area') + 
         geom_boxplot(alpha=0.3, width = 0.2, outlier.size = 0.1) + 
@@ -91,7 +91,7 @@ print(ggplot(cc,aes(y=value,x=Var2,fill=Var2)) +
         theme(legend.position = 'none', axis.text.x = element_text(angle = 45, hjust = 1)))
 dev.off()
 
-pdf(paste0(pdir, 'allsamples_mse.pdf'),width=5,height=3)
+pdf(paste0(pdir, 'allsamples_mse.pdf'),width=4.5,height=3)
 print(ggplot(mse,aes(y=value,x=Var2,fill=Var2)) + 
         geom_violin(alpha=0.2, scale = 'area') + 
         geom_boxplot(alpha=0.3, width = 0.2, outlier.size = 0.1) + 
