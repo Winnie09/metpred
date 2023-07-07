@@ -1,4 +1,6 @@
-trainpredict <- function(trainexpr,testexpr,trainmeth) {
+trainpredict <- function(trainexpr,testexpr,trainmeth,clunumlist = c(1000,2500,5000), lambdalist = c(10^c(-1,0,1,2))) {
+  ## if the lengths of clunumlist and lambdalist are both 1, no cross validation
+  ## if lengths of clunumlist and lambdalist are not both 1 (at least one length > 1), then conduct cross validation to optimize the values. 
   library(data.table)
   library(fastcluster)
   library(reshape2)
@@ -39,7 +41,7 @@ trainpredict <- function(trainexpr,testexpr,trainmeth) {
   stdtrainexpr <- (trainexpr-m)/s
   stdtrainexpr <- stdtrainexpr[s/m > 0.1,]
   
-  clunumlist <- c(1000,2500,5000)
+  
   clunumlist <- clunumlist[clunumlist < nrow(stdtrainexpr)]
   cluexpr <- sapply(clunumlist,function(cn) {
     set.seed(1)
@@ -78,54 +80,61 @@ trainpredict <- function(trainexpr,testexpr,trainmeth) {
     }
   }
   
-  print('start cross validation...')
-  set.seed(12345)
-  spid <- split(sample(colnames(trainexpr)),ceiling(seq_along(colnames(trainexpr))/(ncol(trainexpr)/5)))
-  perf <- NULL
-  for (i in 1:length(spid)) {
-    print(paste0('CV fold ',i))
-    cvtestid <- spid[[i]]
-    cvtrainid <- setdiff(colnames(trainexpr),cvtestid)
-    cvtrainmeth <- trainmeth[,cvtrainid]
-    cvtestmeth <- logistic(trainmeth[,cvtestid])
-    
-    lambdalist <- c(10^c(-1,0,1,2))
-    for (clunum in clunumlist) {
-      print(paste0('clunum ', clunum))	    
-      pred <- inpredfunc(cluexpr[[as.character(clunum)]][,cvtrainid],cluexpr[[as.character(clunum)]][,cvtestid],cvtrainmeth,lambdalist)
-      print('0...')
-      print(str(pred))
-      mse <- sapply(pred,function(i) rowMeans((i-cvtestmeth)^2))
-      colnames(mse) <- lambdalist
-      mse <- melt(mse)
-      colnames(mse) <- c('cpg','lambda','mse')
-      perf <- rbind(perf,data.frame(clunum=clunum,mse))
+  if (!length(clunumlist)==1 | !length(lambdalist)==1){
+    print('Start cross validation...')
+    set.seed(12345)
+    spid <- split(sample(colnames(trainexpr)),ceiling(seq_along(colnames(trainexpr))/(ncol(trainexpr)/5)))
+    perf <- NULL
+    for (i in 1:length(spid)) {
+      print(paste0('CV fold ',i))
+      cvtestid <- spid[[i]]
+      cvtrainid <- setdiff(colnames(trainexpr),cvtestid)
+      cvtrainmeth <- trainmeth[,cvtrainid]
+      cvtestmeth <- logistic(trainmeth[,cvtestid])
+      
+      for (clunum in clunumlist) { #####
+        print(paste0('clunum ', clunum))	    
+        pred <- inpredfunc(cluexpr[[as.character(clunum)]][,cvtrainid],cluexpr[[as.character(clunum)]][,cvtestid],cvtrainmeth,lambdalist)
+        print('0...')
+        print(str(pred))
+        mse <- sapply(pred,function(i) rowMeans((i-cvtestmeth)^2))
+        colnames(mse) <- lambdalist
+        mse <- melt(mse)
+        colnames(mse) <- c('cpg','lambda','mse')
+        perf <- rbind(perf,data.frame(clunum=clunum,mse))
+      }
     }
-  }
-  perf$combpara <- paste0(perf$clunum,'_',perf$lambda)
-  perf <- aggregate(perf$mse,list(perf$combpara,perf$cpg),mean)
-  perf <- perf[order(perf$x),,drop=FALSE]
-  print('1...')
-  print(str(perf))
-
-  perf <- perf[!duplicated(perf[,2]),,drop=FALSE]
-  print('2...')
-  print(str(perf)) 
+    perf$combpara <- paste0(perf$clunum,'_',perf$lambda)
+    perf <- aggregate(perf$mse,list(perf$combpara,perf$cpg),mean)
+    perf <- perf[order(perf$x),,drop=FALSE]
+    print('1...')
+    print(str(perf))
   
-  print('information...')
-  print(table(perf[,1]))
-  print(str(trainexpr))
-  print(str(testexpr))
-  pred <- sapply(unique(perf[,1]),function(uset) {
-    id <- which(perf[,1]==uset)
-    clunum=sub('_.*','',uset)
-    inpredfunc(cluexpr[[clunum]][,colnames(trainexpr)],cluexpr[[clunum]][,colnames(testexpr)],trainmeth[id,,drop=F],lambda=as.numeric(sub('.*_','',uset)))
-  },simplify = F)
-  pred <- do.call(rbind,pred)
+    perf <- perf[!duplicated(perf[,2]),,drop=FALSE]
+    print('2...')
+    print(str(perf)) 
+    
+    print('information...')
+    print(table(perf[,1]))
+    print(str(trainexpr))
+    print(str(testexpr))
+    pred <- sapply(unique(perf[,1]),function(uset) {
+      id <- which(perf[,1]==uset)
+      clunum=sub('_.*','',uset)
+      inpredfunc(cluexpr[[clunum]][,colnames(trainexpr)],cluexpr[[clunum]][,colnames(testexpr)],trainmeth[id,,drop=F],lambda=as.numeric(sub('.*_','',uset)))
+    },simplify = F)
+    pred <- do.call(rbind,pred)
+    print('End cross-validation.')
+  } else { #######
+    clunum = as.character(as.vector(clunumlist))
+    pred = inpredfunc(cluexpr[[clunum]][,colnames(trainexpr)],cluexpr[[clunum]][,colnames(testexpr)],trainmeth,lambda=lambdalist)
+  } 
   print(str(pred))
   colnames(pred) <- oritestname[colnames(pred)]
   #pred[rownames(trainmeth),]
   pred
 }
+
+
 
 
