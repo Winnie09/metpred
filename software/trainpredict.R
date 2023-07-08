@@ -17,8 +17,10 @@ trainpredict <- function(trainexpr,testexpr,trainmeth,clunumlist = c(1000,2500,5
   trainmeth[trainmeth==0] <- min(trainmeth[trainmeth>0])
   trainmeth[trainmeth==1] <- max(trainmeth[trainmeth<1])
   
+  ## logit transformation: from (0,1) to (-inf, inf). Need this for Ridge regression.
   trainmeth <- log(trainmeth/(1-trainmeth))
   
+  ## use intereception of genes in train and test expr, mark train and test in methylation column names
   int <- intersect(rownames(trainexpr),rownames(testexpr))
   trainexpr <- trainexpr[int,,drop=FALSE]
   testexpr <- testexpr[int,,drop=FALSE]
@@ -26,6 +28,7 @@ trainpredict <- function(trainexpr,testexpr,trainmeth,clunumlist = c(1000,2500,5
   oritestname <- colnames(testexpr)
   names(oritestname) <- colnames(testexpr) <- paste0('test_',1:ncol(testexpr))
   
+  ## quantile normalize train and test expr, mark down train and test in expr column names
   expr <- cbind(trainexpr,testexpr)
   dn <- dimnames(expr)
   qnem <- rowMeans(apply(expr,2,function(i) sort(i)))
@@ -41,7 +44,7 @@ trainpredict <- function(trainexpr,testexpr,trainmeth,clunumlist = c(1000,2500,5
   stdtrainexpr <- (trainexpr-m)/s
   stdtrainexpr <- stdtrainexpr[s/m > 0.1,]
   
-  
+  ## gene cluster number
   clunumlist <- clunumlist[clunumlist < nrow(stdtrainexpr)]
   cluexpr <- sapply(clunumlist,function(cn) {
     set.seed(1)
@@ -51,7 +54,7 @@ trainpredict <- function(trainexpr,testexpr,trainmeth,clunumlist = c(1000,2500,5
   },simplify = F)
   names(cluexpr) <- clunumlist
   
-  #intrainexpr=cvtrainexpr;intestexpr=cvtestexpr;intrainmeth=cvtrainmeth;clunum=5;lambdalist=0
+  #cluintrainexpr=cluexpr[[clunum]][,colnames(trainexpr)];cluintestexpr=cluexpr[[clunum]][,colnames(testexpr)];intrainmeth=trainmeth;lambdalist=lambdalist
   
   inpredfunc <- function(cluintrainexpr,cluintestexpr,intrainmeth,lambdalist) {
     print(1)
@@ -134,7 +137,4 @@ trainpredict <- function(trainexpr,testexpr,trainmeth,clunumlist = c(1000,2500,5
   #pred[rownames(trainmeth),]
   pred
 }
-
-
-
 
