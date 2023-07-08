@@ -127,7 +127,7 @@ trainpredict <- function(trainexpr,testexpr,trainmeth,clunumlist = c(1000,2500,5
     print('End cross-validation.')
   } else { #######
     clunum = as.character(as.vector(clunumlist))
-    pred = inpredfunc(cluexpr[[clunum]][,colnames(trainexpr)],cluexpr[[clunum]][,colnames(testexpr)],trainmeth,lambda=lambdalist)
+    pred = inpredfunc(cluexpr[[clunum]][,colnames(trainexpr)],cluexpr[[clunum]][,colnames(testexpr)],trainmeth,lambdalist)
   } 
   print(str(pred))
   colnames(pred) <- oritestname[colnames(pred)]
