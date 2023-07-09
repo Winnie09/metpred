@@ -23,8 +23,8 @@ cw = colnames(w)
 cr = colnames(d)
 cw[cw %in% c("HSC_D10", "HSC_D7")] <- 'HSC_cb'
 cw[cw %in% c("MPP_D6", "MPP_D8", "MPP_D7", "MPP_D9", "MPP_D10")] <- 'MPP_cb'
-cw[cw %in% c("HSC_D5", "HSC_D6")] = 'HSC_cb'
-cw[cw %in% c("MPP_D4", "MPP_D5")] = 'MPP_cb'
+cw[cw %in% c("HSC_D5", "HSC_D6")] = 'HSC_cb,test'
+cw[cw %in% c("MPP_D4", "MPP_D5")] = 'MPP_cb,test'
 cr[cr %in% c("HSC_D1")] = "HSC_cb"
 cr[cr %in% c("MPP_D1", "MPP_D2")] = "MPP_cb"
 rnact <- colnames(d) <- cr
