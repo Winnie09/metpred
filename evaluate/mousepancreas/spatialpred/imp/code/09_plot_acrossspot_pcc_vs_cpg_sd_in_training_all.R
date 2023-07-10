@@ -1,8 +1,10 @@
 setwd('/home/whou10/data/whou/metpred/')
 ddir = 'evaluate/mousepancreas/spatialpred/imp/perf/'
 alls = list.files(ddir)
-s = alls[1]
+# ## only plot four samples
+# alls <- sels <- c('A46_F_P_K4_D4', 'A47_F_P_K4_D7', 'A72_F_LM_D7', 'A73_F_LM_D4')
 
+## plot
 ccall = lapply(alls, function(s){
   print(s)
   ddir = paste0('evaluate/mousepancreas/spatialpred/imp/perf/', s, '/')
@@ -23,9 +25,14 @@ p <- ggplot(data = cc, aes(y=cor,x=sd,fill=sd)) +
   xlab('CpG sd in training samples') + 
   theme(legend.position = 'none', axis.text.x = element_text(angle = 45, hjust = 1)) + 
   facet_wrap(~sample)
-ggsave('evaluate/mousepancreas/spatialpred/imp/plot/perf/all/acrossspot_pcc_vs_cpg_sd_in_training.png', 
-       p, 
-       width = 5, 
-       height = 4.5, 
+ggsave('evaluate/mousepancreas/spatialpred/imp/plot/perf/all/acrossspot_pcc_vs_cpg_sd_in_training.png',
+       p,
+       width = 5.6,
+       height = 4.5,
        dpi = 300)
+# ggsave('evaluate/mousepancreas/spatialpred/imp/plot/perf/all/acrossspot_pcc_vs_cpg_sd_in_training_sel.png',
+#        p,
+#        width = 5.6,
+#        height = 2,
+#        dpi = 300)
 
