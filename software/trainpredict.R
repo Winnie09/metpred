@@ -12,7 +12,14 @@ trainpredict <- function(trainexpr,testexpr,trainmeth,clunumlist = c(1000,2500,5
   rowsds <- function(data,cm) {
     sqrt((rowMeans(data*data) - cm^2) / (ncol(data) - 1) * ncol(data))  
   }
-  
+
+  if (sum(complete.cases(trainmeth)) != nrow(trainmeth)){
+    print('Training methylation contains NA. Removing rows with NAs.')
+    trainmeth = trainmeth[complete.cases(trainmeth), , drop = F]
+    print(paste0('Reserved ', nrow(trainmeth), ' CpGs.' ))
+  }
+    
+
   trainmeth <- trainmeth[,colnames(trainexpr)]
   trainmeth[trainmeth==0] <- min(trainmeth[trainmeth>0])
   trainmeth[trainmeth==1] <- max(trainmeth[trainmeth<1])
