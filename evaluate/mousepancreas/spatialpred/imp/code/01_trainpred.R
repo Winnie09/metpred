@@ -1,10 +1,13 @@
- s =  as.character(commandArgs(trailingOnly = T)[[1]]) # s = 'A46_F_P_K4_D4'
+ s =  as.character(commandArgs(trailingOnly = T)[1]) # s = 'A46_F_P_K4_D4'
 source('/home/whou10/scratch16/whou10/resource/startup.R')
 setwd('/home/whou10/data/whou/metpred/')
-dir.create(dir.r <- paste0('evaluate/mousepancreas/spatialpred/imp/res/', s), recursive = T)
+dir.r <- paste0('evaluate/mousepancreas/spatialpred/imp/res/', s)
+dir.create(dir.r, recursive = T, showWarnings = F)
 cpglist <- readRDS(paste0('evaluate/mousepancreas/celltypespecific_cv/cpg_group/', s, '.rds'))
-id = as.numeric(commandArgs(trailingOnly = T)[[2]])
+id = as.numeric(commandArgs(trailingOnly = T)[2])
+print(id)
 id = length(cpglist) - id + 1 ## run largest var CpG group first
+if (id <=0 ) {stop('cpglist length smaller than $j.')}
 file_name <- paste0(dir.r, '/pred_cpg_sd_', names(cpglist)[id], '.rds')
 if (file.exists(file_name)) {
   stop("File already exists. Stopping execution.")
@@ -28,4 +31,5 @@ pred <- trainpredict(trainexpr=r[,trainid],
                      testexpr=expr,
                      trainmeth=w[cpglist[[id]], trainid])
 saveRDS(pred, file_name)
+
 
