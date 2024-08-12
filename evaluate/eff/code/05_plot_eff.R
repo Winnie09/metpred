@@ -8,20 +8,22 @@ source('/home/whou10/scratch16/whou10/resource/ggplot_theme.R')
 
 library(ggplot2)
 library(gridExtra)
-pdf(paste0(pdir, 'eff_simu_wgbs_chr10.pdf'), width = 5, height = 2.5)
 p1 <- ggplot(data = df, aes(x = numberSample, y = t)) +
   geom_point(size = 0.6) +
   geom_line(lwd = 0.2, color = 'grey') +
   xlab(paste0("Number of samples")) +
   ylab('Time (min)')+
-  ggtitle(paste0('Scalability: ', round(unique(df$scalability), 3)))
-
+  ggtitle(paste0('Scalability: ', round(unique(df$scalability), 3))) +
+  theme(plot.margin = margin(rep(20,4)))
 
 p2 <- ggplot(data = df, aes(x = numberSample, y = m)) +
   geom_point(size = 0.6) +
   geom_line(lwd = 0.2, color = 'grey') +
   xlab(paste0("Number of samples")) +
-  ylab('Memory (GB)') 
+  ylab('Memory (GB)') +
+  theme(plot.margin = margin(rep(20,4)))
+pdf(paste0(pdir, 'eff_simu_wgbs_chr10.pdf'), width = 4.5, height = 2.2)
 
 grid.arrange(p1, p2, nrow = 1)
 dev.off()
+
