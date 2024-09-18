@@ -20,29 +20,28 @@ r.te = readRDS(paste0(ddir, 'rna_test_sc.rds'))
 # ..$ : chr [1:37740] "b_cells:AAACATACAATGCC-1" "b_cells:AAACATACACGCAT-1" "b_cells:AAACATACGAATAG-1" "b_cells:AAACATACGTGTCA-1" ...
 # selcpg = readRDS('/home/whou10/data/whou/metpred/evaluate/pbmc/imp/res/selcpg/top1e4_mono_t_diff_greater0.2_tr_te.rds')
 ct = sub(':.*', '', colnames(r.te))
-r.te.pb = aggregatefunc2(d = r.te,
-                         by = ct,
-                         fun = 'mean')
+# r.te.pb = aggregatefunc2(d = r.te,
+#                          by = ct,
+#                          fun = 'mean')
 # > str(r.te.pb)
 # num [1:8209, 1:7] 0.1057 0.3414 0.0511 0.0245 0.1985 ...
 # - attr(*, "dimnames")=List of 2
 # ..$ : chr [1:8209] "NOC2L" "ISG15" "TNFRSF18" "TNFRSF4" ...
 # ..$ : chr [1:7] "b_cells" "cd14_monocytes" "cd56_nk" "cytotoxic_t" ...
 
+
+r.te = r.te[, ct %in% c('b_cells', 'cd14_monocytes', 'cd56_nk', 
+                        'cytotoxic_t', 'memory_t', 'naive_t',
+                        'regulatory_t') ]
 rm = rowMeans(w.tr)
 rvar = apply(w.tr, 1, var)
-
-selcpg = names(rvar > median(rvar, na.rm = T))
-
-set.seed(12345)
-selcpg = sample(selcpg, 1e5)
-
+rvar = sort(rvar, decreasing = T)
+selcpg = names(head(rvar, 1e5))
 mean(selcpg %in% rownames(w.tr))
-
 print(str(selcpg))
 
 pred <- trainpredict(trainexpr=r.tr,
-                     testexpr=r.te.pb,
+                     testexpr=r.te,
                      trainmeth=w.tr[selcpg,],
                      clunumlist = c(1e3),
                      lambdalist = c(10e-1))
