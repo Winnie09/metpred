@@ -1,4 +1,6 @@
 rm(list=ls())
+rdir = '/home/whou10/data/whou/metpred/data/pbmc/imp/res/'
+dir.create(rdir, recursive = T)
 r = readRDS('/home/whou10/data/whou/metpred/data/v_20220624/combine/rna/hg38_blueprint.rds')
 r = r[!is.na(rownames(r)), ]
 cn = colnames(r)
@@ -27,14 +29,17 @@ trainid = setdiff(1:length(cn), testid)
 r.tr = r[, trainid]
 r.te = r[,testid]
 # w = readRDS('/home/whou10/data/whou/metpred/data/v_20220624/combine/wgbs/hg38_blueprint.rds')
+# w = readRDS('/home/whou10/data/whou/metpred/data/v_20220624/hg38/blueprint/proc/wgbs_bs.rds')
 w = readRDS('/home/whou10/data/whou/metpred/data/v_20220624/hg38/blueprint/proc/wgbs_bs.rds')
-
 w.tr = w[, colnames(r.tr)]
 w.te = w[, colnames(r.te)]
-rdir = '/home/whou10/data/whou/metpred/data/pbmc/imp/res/'
-dir.create(rdir, recursive = T)
 
+## remove cord blood samples in testing gs b/c diff from pbmc 
+r.te = r.te[, -c(1,3,4,9)]
+w.te = w.te[, -c(1,3,4,9)]
 sc.te = pbmc[, ct %in% c('cd56_nk','cd14_monocytes', 'b_cells', 'cytotoxic_t', 'memory_t', 'regulatory_t', 'naive_t')]
+
+
 saveRDS(r.tr, paste0(rdir, 'rna_train.rds'))
 saveRDS(w.tr, paste0(rdir, 'wgbs_train.rds'))
 saveRDS(r.te, paste0(rdir, 'rna_test_bulk.rds'))
