@@ -32,7 +32,7 @@ dev.off()
 
 ## acrosscpg pcc
 pd2 = acrossRowCor_plotdata(pred = t(pred.agg), goldstandard = t(w.te.agg))
-saveRDS(pd2, paste0(rdir, 'perf/ramp/', key, '_acrossCpG_pcc.rds'))
+saveRDS(pd2, paste0(rdir, 'perf/ramp/', key, '_acrosscpg_pcc.rds'))
 
 library(ggplot2)
 png(paste0(rdir, 'plot/', key, '_acrossCpG_pcc.png'),res = 300,
