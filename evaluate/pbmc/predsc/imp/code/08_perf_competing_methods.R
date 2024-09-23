@@ -1,9 +1,9 @@
 ## calculate pbmc perf
 rm(list=ls())
-method = commandArgs(trailingOnly = T)[1] ##. neargene or permu
+method = commandArgs(trailingOnly = T)[1] ## neargene or permu
 # key = 'pred_var_10000_CpG'
 # key = 'pred_varmedian_0673446_CpG'
-key = 'allcpg'
+key = commandArgs(trailingOnly = T)[2] # key = 'allcpg' or key = 'var_100000cpg'
 print(method)
 
 source('/home/whou10/scratch16/whou10/resource/myfunc/01_function.R')
@@ -14,7 +14,12 @@ rdir = '/home/whou10/data/whou/metpred/evaluate/pbmc/predsc/imp/'
 pred = readRDS(paste0(rdir, '/competing/combine/', method, '.rds'))
 
 ## load gs, match dim with pred
-gs = readRDS('/home/whou10/data/whou/metpred/evaluate/pbmc/predsc/imp/res/eval/eval_goldstandard_ctmean.rds')
+if (key == 'allcpg'){
+  gs = readRDS('/home/whou10/data/whou/metpred/evaluate/pbmc/predsc/imp/res/eval/eval_goldstandard_ctmean.rds')
+} else (grep('100000', key)){
+  gs = readRDS('/home/whou10/data/whou/metpred/evaluate/pbmc/predsc/imp/res/eval/eval_goldstandard_ctmean_var_100000CpG.rds')
+}
+  
 o = intersect(rownames(pred), rownames(gs))
 pred = pred[o, ]
 gs = gs[o, ]
