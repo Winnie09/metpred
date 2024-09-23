@@ -46,6 +46,7 @@ saveRDS(r.te, paste0(rdir, 'rna_test_bulk.rds'))
 saveRDS(w.te, paste0(rdir, 'wgbs_test.rds'))
 saveRDS(sc.te, paste0(rdir, 'rna_test_sc.rds'))
 
-meta = data.frame(Sample = colnames(r), Usage = sapply(colnames(r), function(i) ifelse(i %in% colnames(r.tr), 'Train', 'Test')))
+meta = data.frame(Sample = c(colnames(r.tr), colnames(r.te)), 
+                  Usage = c(rep('Train', ncol(r.tr)), rep('Test_goldstandard', ncol(r.te))))
 write.csv(meta, '/home/whou10/data/whou/metpred/data/pbmc/imp/res/sampleInfo.csv', row.names = F)
 
