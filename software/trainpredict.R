@@ -1,4 +1,5 @@
-trainpredict <- function(trainexpr,testexpr,trainmeth,clunumlist = c(1000,2500,5000), lambdalist = c(10^c(-1,0,1,2))) {
+
+trainpredict <- function(trainexpr,testexpr,trainmeth,clunumlist = c(1000,2500,5000), lambdalist = c(10^c(-1,0,1))) {
   ## if the lengths of clunumlist and lambdalist are both 1, no cross validation
   ## if lengths of clunumlist and lambdalist are not both 1 (at least one length > 1), then conduct cross validation to optimize the values. 
   library(data.table)
@@ -12,23 +13,44 @@ trainpredict <- function(trainexpr,testexpr,trainmeth,clunumlist = c(1000,2500,5
   rowsds <- function(data,cm) {
     sqrt((rowMeans(data*data) - cm^2) / (ncol(data) - 1) * ncol(data))  
   }
-
-  if (sum(complete.cases(trainmeth)) != nrow(trainmeth)){
-    print('Training methylation contains NA. Removing rows with NAs.')
-    trainmeth = trainmeth[complete.cases(trainmeth), , drop = F]
-    print(paste0('Reserved ', nrow(trainmeth), ' CpGs.' ))
+  
+  
+  
+  complete_cases_rowwise <- function(mat) {
+    apply(mat, 1, function(row) all(!is.na(row)))
   }
-    
-
+  
+  # Apply the function to your data
+  complete_cases <- complete_cases_rowwise(trainmeth)
+  
+  # Subset the data using the complete cases index
+  trainmeth_complete <- trainmeth[complete_cases, , drop = FALSE]
+  
+  # Check the dimensions to ensure it worked
+  trainmeth <- trainmeth_complete
+  print(paste0('Reserved ', nrow(trainmeth), ' CpGs.'))
+  
+  # ### note: long vectors not supported yet: complete_cases.c:192
+  # if (sum(complete.cases(trainmeth)) != nrow(trainmeth)) {
+  #   print('Training methylation contains NA. Removing rows with NAs.')
+  #   trainmeth = trainmeth[complete.cases(trainmeth), , drop = F]
+  #   print(paste0('Reserved ', nrow(trainmeth), ' CpGs.'))
+  # }
+  
   trainmeth <- trainmeth[,colnames(trainexpr)]
-  trainmeth[trainmeth==0] <- min(trainmeth[trainmeth>0])
-  trainmeth[trainmeth==1] <- max(trainmeth[trainmeth<1])
+  # trainmeth[trainmeth==0] <- min(trainmeth[trainmeth>0]) ## 0.4098026
+  # trainmeth[trainmeth==1] <- max(trainmeth[trainmeth<1]) ## 0.9939805
+  trainmeth[trainmeth==0] <- 1e-3
+  trainmeth[trainmeth==1] <- 1-1e-3
+  
+  ## training mean, testing mean
   
   ## logit transformation: from (0,1) to (-inf, inf). Need this for Ridge regression.
   trainmeth <- log(trainmeth/(1-trainmeth))
   
   ## use intereception of genes in train and test expr, mark train and test in methylation column names
   int <- intersect(rownames(trainexpr),rownames(testexpr))
+  print(paste0('Number of overlapping genes in train and test expr: ', length(int)))
   trainexpr <- trainexpr[int,,drop=FALSE]
   testexpr <- testexpr[int,,drop=FALSE]
   colnames(trainmeth) <- colnames(trainexpr) <- paste0('train_',1:ncol(trainexpr))
@@ -119,7 +141,7 @@ trainpredict <- function(trainexpr,testexpr,trainmeth,clunumlist = c(1000,2500,5
     perf <- perf[order(perf$x),,drop=FALSE]
     print('1...')
     print(str(perf))
-  
+    
     perf <- perf[!duplicated(perf[,2]),,drop=FALSE]
     print('2...')
     print(str(perf)) 
