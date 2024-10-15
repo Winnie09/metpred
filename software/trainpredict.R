@@ -38,8 +38,8 @@ trainpredict <- function(trainexpr,testexpr,trainmeth,clunumlist = c(1000,2500,5
   # }
   
   trainmeth <- trainmeth[,colnames(trainexpr)]
-  # trainmeth[trainmeth==0] <- min(trainmeth[trainmeth>0]) ## 0.4098026
-  # trainmeth[trainmeth==1] <- max(trainmeth[trainmeth<1]) ## 0.9939805
+  # trainmeth[trainmeth==0] <- min(trainmeth[trainmeth>0]) 
+  # trainmeth[trainmeth==1] <- max(trainmeth[trainmeth<1]) 
   trainmeth[trainmeth==0] <- 1e-3
   trainmeth[trainmeth==1] <- 1-1e-3
   
