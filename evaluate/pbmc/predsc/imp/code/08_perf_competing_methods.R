@@ -16,7 +16,7 @@ pred = readRDS(paste0(rdir, '/competing/combine/', method, '.rds'))
 ## load gs, match dim with pred
 if (key == 'allcpg'){
   gs = readRDS('/home/whou10/data/whou/metpred/evaluate/pbmc/predsc/imp/res/eval/eval_goldstandard_ctmean.rds')
-} else (grep('100000', key)){
+} else if (grep('100000', key)){
   gs = readRDS('/home/whou10/data/whou/metpred/evaluate/pbmc/predsc/imp/res/eval/eval_goldstandard_ctmean_var_100000CpG.rds')
 }
   
@@ -34,3 +34,13 @@ id = complete.cases(pred) & complete.cases(gs)
 pd2 = acrossRowCor_plotdata(pred = t(pred[id,]), 
                             goldstandard = t(gs[id,]))
 saveRDS(pd2, paste0(rdir, 'perf/', method, '/', key, '_acrosscpg_pcc.rds'))
+
+set.seed(1)
+id = sample(1:nrow(pred), min(1e5,nrow(pred)))
+pdir = '/home/whou10/data/whou/metpred/evaluate/pbmc/predsc/imp/plot/'
+pdf(paste0(pdir, 'scatterplot_', method, '.pdf'))
+par(mfrow=c(1,3))
+for (i in 1:3){
+  smoothScatter(pred[id,i], gs[id,i], xlab='Predicted', ylab='Goldstandard')
+}
+dev.off()

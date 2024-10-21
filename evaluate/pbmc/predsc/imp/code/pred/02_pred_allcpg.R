@@ -21,7 +21,17 @@ str(r.tr)
 # ..$ : chr [1:58434] "TSPAN6" "TNMD" "DPM1" "SCYL3" ...
 # ..$ : chr [1:66] "blueprint_venous_blood-C000S5-CD14-positive_CD16-negative_classical_monocyte" "blueprint_venous_blood-C000S5-mature_neutrophil" "blueprint_venous_blood-C0010K-CD14-positive_CD16-negative_classical_monocyte" "blueprint_venous_blood-C0010K-mature_neutrophil" ...
 r.te.sub = readRDS(paste0(ddir, 'rna_test_sc_sub300.rds'))
- 
+# > str(r.te.sub)
+# num [1:8209, 1:2100] 0.0963 0.3414 0.0868 0.0426 0.1903 ...
+# - attr(*, "dimnames")=List of 2
+# ..$ : chr [1:8209] "NOC2L" "ISG15" "TNFRSF18" "TNFRSF4" ...
+# ..$ : chr [1:2100] "b_cells:AAACATACAATGCC-1" "b_cells:AAACATACACGCAT-1" "b_cells:AAACATACGAATAG-1" "b_cells:AAACATACGTGTCA-1" ...
+# ct = sub(':.*', '', colnames(r.te.sub))
+# table(ct)
+# b_cells cd14_monocytes        cd56_nk    cytotoxic_t       memory_t 
+# 300            300            300            300            300 
+# naive_t   regulatory_t 
+# 300            300 
 pred <- trainpredict(trainexpr=r.tr,
                      testexpr=r.te.sub,
                      trainmeth=w.tr,

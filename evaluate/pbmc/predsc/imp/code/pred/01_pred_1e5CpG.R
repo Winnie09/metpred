@@ -13,27 +13,18 @@ r.tr = readRDS(paste0(ddir, 'rna_train.rds'))
 # - attr(*, "dimnames")=List of 2
 # ..$ : chr [1:58434] "TSPAN6" "TNMD" "DPM1" "SCYL3" ...
 # ..$ : chr [1:66] "blueprint_venous_blood-C000S5-CD14-positive_CD16-negative_classical_monocyte" "blueprint_venous_blood-C000S5-mature_neutrophil" "blueprint_venous_blood-C0010K-CD14-positive_CD16-negative_classical_monocyte" "blueprint_venous_blood-C0010K-mature_neutrophil" ...
-r.te = readRDS(paste0(ddir, 'rna_test_sc.rds'))
-# num [1:8209, 1:37740] 0.0963 0.3414 0.0868 0.0426 0.1903 ...
+r.te = readRDS(paste0(ddir, 'rna_test_sc_sub300.rds'))
+# > str(r.te)
+# num [1:8209, 1:2100] 0.0963 0.3414 0.0868 0.0426 0.1903 ...
 # - attr(*, "dimnames")=List of 2
 # ..$ : chr [1:8209] "NOC2L" "ISG15" "TNFRSF18" "TNFRSF4" ...
-# ..$ : chr [1:37740] "b_cells:AAACATACAATGCC-1" "b_cells:AAACATACACGCAT-1" "b_cells:AAACATACGAATAG-1" "b_cells:AAACATACGTGTCA-1" ...
-# selcpg = readRDS('/home/whou10/data/whou/metpred/evaluate/pbmc/imp/res/selcpg/top1e4_mono_t_diff_greater0.2_tr_te.rds')
+# ..$ : chr [1:2100] "b_cells:AAACATACAATGCC-1" "b_cells:AAACATACACGCAT-1" "b_cells:AAACATACGAATAG-1" "b_cells:AAACATACGTGTCA-1" ...
 ct = sub(':.*', '', colnames(r.te))
-# r.te.pb = aggregatefunc2(d = r.te,
-#                          by = ct,
-#                          fun = 'mean')
-# > str(r.te.pb)
-# num [1:8209, 1:7] 0.1057 0.3414 0.0511 0.0245 0.1985 ...
-# - attr(*, "dimnames")=List of 2
-# ..$ : chr [1:8209] "NOC2L" "ISG15" "TNFRSF18" "TNFRSF4" ...
-# ..$ : chr [1:7] "b_cells" "cd14_monocytes" "cd56_nk" "cytotoxic_t" ...
-
-
-r.te = r.te[, ct %in% c('b_cells', 'cd14_monocytes', 'cd56_nk', 
-                        'cytotoxic_t', 'memory_t', 'naive_t',
-                        'regulatory_t') ]
-rm = rowMeans(w.tr)
+# table(ct)
+# b_cells cd14_monocytes        cd56_nk    cytotoxic_t       memory_t 
+# 300            300            300            300            300 
+# naive_t   regulatory_t 
+# 300            300 
 rvar = apply(w.tr, 1, var)
 rvar = sort(rvar, decreasing = T)
 selcpg = names(head(rvar, 1e5))

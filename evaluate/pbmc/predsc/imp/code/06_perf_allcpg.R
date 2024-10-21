@@ -1,12 +1,18 @@
 # key = 'pred_var_100000_CpG'
 # key = 'pred_varmedian_0673446_CpG'
 key = 'allcpg'
+# key = 'var_100000cpg'
 source('/home/whou10/scratch16/whou10/resource/myfunc/01_function.R')
 ddir <- '/home/whou10/data/whou/metpred/evaluate/pbmc/predsc/imp/res/eval/'
 rdir = '/home/whou10/data/whou/metpred/evaluate/pbmc/predsc/imp/'
-pred.agg <- readRDS(paste0(ddir, 'eval_pred_ctmean.rds'))
-w.te.agg <- readRDS(paste0(ddir, 'eval_goldstandard_ctmean.rds'))
-
+if (key == 'allcpg'){
+  pred.agg <- readRDS(paste0(ddir, 'eval_pred_ctmean.rds'))
+  w.te.agg <- readRDS(paste0(ddir, 'eval_goldstandard_ctmean.rds'))
+} else if(key == 'var_100000cpg') {
+  pred.agg <- readRDS(paste0(ddir, 'eval_pred_ctmean_var_100000CpG.rds'))
+  w.te.agg <- readRDS(paste0(ddir, 'eval_goldstandard_ctmean_var_100000CpG.rds'))
+}
+  
 pd = acrossRowCor_plotdata(pred = pred.agg, goldstandard = w.te.agg)
 saveRDS(pd, paste0(rdir, 'perf/ramp/', key, '_acrosssample_pcc.rds'))
 
