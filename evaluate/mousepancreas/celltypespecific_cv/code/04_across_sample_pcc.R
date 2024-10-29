@@ -1,6 +1,10 @@
+method = commandArgs(trailingOnly = T)[[1]] # method = 'permu'
 source('/home/whou10/scratch16/whou10/resource/startup.R')
-mse <- lapply(seq(1, 5), function(cvid){
-  dir <- paste0('evaluate/mousepancreas/celltypespecific_cv/perf/mse/cv', cvid, '/')
+rdir <- '/home/whou10/data/whou/metpred/evaluate/mousepancreas/celltypespecific_cv/perf/all/'
+cvid = 1
+cc3 <- lapply(seq(1, 5), function(cvid){
+  print(cvid)
+  dir <- paste0('evaluate/mousepancreas/celltypespecific_cv/perf/', method, '/pcc/cv', cvid, '/')
   allf <- list.files(dir)
   cc <- lapply(allf, function(f){
     tmp <- readRDS(paste0(dir, f))
@@ -13,9 +17,5 @@ mse <- lapply(seq(1, 5), function(cvid){
   })
   cc2 <- do.call(rbind, cc)
 })
-mse2 <- do.call(rbind, mse)  
-acrossRowCor_plot(plotdata = mse2,
-                  ylab = 'across-sample MSE',
-                  savefile = TRUE,
-                  filename = 'evaluate/mousepancreas/celltypespecific_cv/plot/across_sample_mse.pdf')
-
+cc4 <- do.call(rbind, cc3)  
+saveRDS(cc4, paste0(rdir, method, '_across_sample_pcc.rds'))
