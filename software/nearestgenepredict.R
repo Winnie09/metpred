@@ -13,8 +13,8 @@ nearestgenepredict <- function(trainexpr,testexpr,trainmeth,species='human') {
   }
   
   trainmeth <- trainmeth[,colnames(trainexpr)]
-  trainmeth[trainmeth==0] <- min(trainmeth[trainmeth>0])
-  trainmeth[trainmeth==1] <- max(trainmeth[trainmeth<1])
+  trainmeth[trainmeth==0] <- 1e-3
+  trainmeth[trainmeth==1] <- 1-1e-3
   
   trainmeth <- log(trainmeth/(1-trainmeth))
   
@@ -39,25 +39,25 @@ nearestgenepredict <- function(trainexpr,testexpr,trainmeth,species='human') {
   s <- rowsds(trainexpr,m)
   trainexpr <- trainexpr[s/m > 0.1,]
   
-  if (!grepl('-',rownames(me)[1])) {
-  megrchr <- sub(':.*','',rownames(me))
-  megrpos <- as.numeric(sub('.*:','',rownames(me)))
-  megr <- GRanges(seqnames=megrchr,IRanges(start=megrpos,end=megrpos))
+  if (!grepl('-',rownames(trainmeth)[1])) {
+    megrchr <- sub(':.*','',rownames(trainmeth))
+    megrpos <- as.numeric(sub('.*:','',rownames(trainmeth)))
+    megr <- GRanges(seqnames=megrchr,IRanges(start=megrpos,end=megrpos))
   } else {
-  megrchr <- sub(':.*','',rownames(me))
-  megrstart <- as.numeric(sub('-.*','',sub('.*:','',rownames(me))))
-  megrend <- as.numeric(sub('.*-','',sub('.*:','',rownames(me))))
-  megr <- GRanges(seqnames=megrchr,IRanges(start=megrstart,end=megrend))
+    megrchr <- sub(':.*','',rownames(trainmeth))
+    megrstart <- as.numeric(sub('-.*','',sub('.*:','',rownames(trainmeth))))
+    megrend <- as.numeric(sub('.*-','',sub('.*:','',rownames(trainmeth))))
+    megr <- GRanges(seqnames=megrchr,IRanges(start=megrstart,end=megrend))
   }
   print(megr)
-
+  
   if (species=='human') {
     gtf <- data.table::fread('/home/whou10/data/whou/resource/gtf/grch38.gtf',data.table=F)  
   } else if (species=='mouse') {
     gtf <- data.table::fread('/home/whou10/data/whou/resource/gtf/grcm38.gtf',data.table=F)  
   }
   gtf <- gtf[gtf[,3]=='gene',]
-  gn <- sub('\\..*','',sub('gene_id "','',gtf[,9]))
+  gn <- sub('\".*','',sub('.*gene_name "','',gtf[,9]))
   trainexpr <- trainexpr[rownames(trainexpr) %in% gn,]
   
   tss <- GRanges(seqnames=gtf[,1],IRanges(start=gtf[,4],end=gtf[,5]),strand=gtf[,7])
@@ -76,6 +76,6 @@ nearestgenepredict <- function(trainexpr,testexpr,trainmeth,species='human') {
   pred <- do.call(rbind,pred)
   pred <- logistic(pred)
   colnames(pred) <- oritestname[colnames(pred)]
-  pred[rownames(trainmeth),]
+  pred[intersect(rownames(trainmeth), rownames(pred)),]
 }
 
