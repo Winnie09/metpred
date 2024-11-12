@@ -70,9 +70,6 @@ cgi.mean.true <- sapply(unique(o[,1]), function(i){
 }) 
 cgi.mean.true = cgi.mean.true[!is.na(cgi.mean.true)]
 
-
-
-
 ## compare and plot the CpG PCC within a same CGI using predicted, measured values in matched CpG-CGI relationship, and permuted CpG-CGI relationship
 pd = data.frame(type = c(rep('pred.mean', length(cgi.mean)), rep('pmpred.mean', length(cgipm.mean)), rep('true.mean', length(cgi.mean.true))),
                 value = c(cgi.mean, cgipm.mean, cgi.mean.true))
@@ -84,9 +81,9 @@ levels(pd[,1]) = c('Permute', 'Ramp', 'Measured')
 colv = readRDS('/home/whou10/data/whou/metpred/setting/method_color.rds')
 library(ggplot2)
 library(RColorBrewer)
-pdf(paste0(pdir, 'cgi_mean_violin.pdf'), width = 4, height = 2.7)
+pdf(paste0(pdir, 'cgi_pcc_violin.pdf'), width = 2.5, height = 2.2)
 ggplot(data = pd, aes(x = type, y = value, fill = type)) + 
-  geom_jitter(alpha = 0.1, stroke = 0, size = 0.1, width = 0.1) + 
+  # geom_jitter(alpha = 0.1, stroke = 0, size = 0.1, width = 0.1) + 
   geom_violin(scale = 'width',width = 0.8, alpha = 0.3) + 
   geom_boxplot(outlier.shape = NA, width = 0.1) + 
   scale_fill_manual(values = colv) + 
@@ -94,8 +91,8 @@ ggplot(data = pd, aes(x = type, y = value, fill = type)) +
   theme(legend.position = 'none', 
         axis.text = element_text(color = 'black', size = 10), 
         axis.title = element_text(color = 'black', size = 10))+
-  ylab('Mean DNAme within CpG islands') + 
-  xlab('Models')
+  ylab('DNAm correlation within CGI') + 
+  xlab('Method')
 dev.off()
 
 ## find a CGI with more than 30 CpG as an example
@@ -118,7 +115,7 @@ hm.pd = rbind(pred[tmp[,2],],
               pred[tmp.pm[,2],],
               true[tmp[,2],])
 rownames(hm.pd) <- paste0(rownames(hm.pd), ';', seq(1, nrow(hm.pd)))
-rowann = data.frame(type = rep(c('pred', 'pred.pm', 'true'), each = nrow(tmp)))
+rowann = data.frame(type = rep(c('Ramp', 'Permute', 'Measured'), each = nrow(tmp)))
 rownames(rowann) = rownames(hm.pd)
 rowann.col = c('orange', 'blue', 'purple')
 names(rowann.col) = unique(rowann)
@@ -131,7 +128,7 @@ pdf(paste0(pdir, 'example_CGI_predvalues_pmpredvalues_truevalues_hm.pdf'), width
 setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
 pheatmap(hm.pd, scale = 'none', show_rownames = F, show_colnames = F, cluster_rows = FALSE, annotation_row = rowann, border_color = NA, main = paste0(seqnames(gr)[i], ':', start(gr)[i], '-', end(gr)[i])) 
 setHook("grid.newpage", NULL, "replace")
-grid.text("Samples", y=0.01, gp=gpar(fontsize=10))
+grid.text("samples", y=0.01, gp=gpar(fontsize=10))
 grid.text("CpGs", x=0, rot=90, gp=gpar(fontsize=10))
 dev.off()
 
