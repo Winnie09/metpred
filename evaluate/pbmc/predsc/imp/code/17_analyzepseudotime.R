@@ -21,6 +21,7 @@ loc <- as.numeric(sub('.*_','',rownames(mefit)))
 megr <- GRanges(seqnames=sub('_.*','',rownames(mefit)),IRanges(start=loc,end=loc))
 names(megr) <- rownames(mefit)
 o <- as.matrix(findOverlaps(pro,megr))
+saveRDS(o, '/home/whou10/data/whou/metpred/evaluate/pbmc/predsc/imp/plot/promoterDNAm_overlap.rds')
 
 library(dtw)
 dist <- sapply(unique(o[,1]),function(i) {
@@ -102,6 +103,12 @@ pheatmap(mefit[o[o[,1]==i,2], ], show_colnames = F, show_rownames = T,
          cluster_cols = F,
          scale = 'none', main = g)
 dev.off()
+
+## important:save the cpg's DNAm for those cpg overlaped with gene promoters
+cpgmet = mefit[o[,2], ]
+rownames(cpgmet) = paste0(names(pro)[o[,1]], ';', rownames(cpgmet))
+saveRDS(cpgmet, '/home/whou10/data/whou/metpred/evaluate/pbmc/predsc/imp/plot/promoter_cpg.rds')
+
 
 ## ==========================================
 ## show all promoter DNAM and gene expression
