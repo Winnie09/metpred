@@ -1,7 +1,7 @@
-ge <- readRDS('/home-4/zji4@jhu.edu/scratch/metpred/data/tcga_450k/filelist/hg38/ge.rds')
-me <- readRDS('/home-4/zji4@jhu.edu/scratch/metpred/data/tcga_450k/filelist/hg38/me.rds')
+ge <- readRDS('/home/whou10/data/whou/metpred/data/tcga/hg38/450k_2021/filelist/ge.rds')
+me <- readRDS('/home/whou10/data/whou/metpred/data/tcga/hg38/450k_2021/filelist/me.rds')
 int <- intersect(ge$patient,me$patient)
-af <- list.files('/home-4/zji4@jhu.edu/scratch/metpred/data/tcga_450k/proc/hg38/me',full.names = T)
+af <- list.files('/home/whou10/data/whou/metpred/data/tcga/hg38/450k_2021/me',full.names = T)
 d <- lapply(af,readRDS)
 d <- do.call(cbind,d)
 fd <- sapply(int,function(s) {
@@ -15,6 +15,7 @@ fd <- sapply(int,function(s) {
 rn <- substr(row.names(fd),1,2)
 fd <- fd[rn=='cg',]
 fd <- fd[rowMeans(is.na(fd)) < 1,]
-saveRDS(fd,file='/home-4/zji4@jhu.edu/scratch/metpred/data/tcga_450k/proc/hg38/combine/me.rds')
+saveRDS(fd,file='/home/whou10/data/whou/metpred/data/tcga/hg38/450k_2021/combine/me.rds')
+
 
 
