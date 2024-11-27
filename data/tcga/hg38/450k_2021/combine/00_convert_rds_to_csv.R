@@ -29,6 +29,7 @@ write.csv(data.frame(CpG_name = rownames(me2), CpG_location = rn, stringsAsFacto
 rownames(me2) = rn
 write.csv(me2, 'Methylformer_data/me_rownamesloc.csv')
 saveRDS(me2, 'Methylformer_data/me_rownamesloc.rds')
+saveRDS(rownames(me2), 'Methylformer_data/me_cpgnames.rds')
 
 
 rn = loc[rownames(mi)]
