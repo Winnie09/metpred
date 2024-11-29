@@ -15,7 +15,9 @@ arraycpg = rownames(array)
 
 ## intersect cpg
 int = intersect(wgbscpg, arraycpg) ##  chr [1:320132] "chr1_631826" "chr1_631932" 
+str(int)
 d = array[int, ]
+str(d)
 
 
 ## load in array's rna-seq samples
@@ -29,8 +31,8 @@ gr <- GRanges(seqnames=gtf[,1],IRanges(start=gtf[,4],end=gtf[,5]),strand=gtf[,7]
 names(gr) <- gn
 
 pro <- promoters(gr,upstream=1000,downstream = 1000)
-seq <- sub(':.*','',rownames(d)) ## 
-pos <- as.numeric(sub('.*:','',rownames(d))) ## 
+seq <- sub('_.*','',rownames(d)) ## 
+pos <- as.numeric(sub('.*_','',rownames(d))) ## 
 
 dgr <- GRanges(seqnames=seq,IRanges(start=pos,end=pos+1))
 o <- as.data.frame(findOverlaps(dgr,pro))
@@ -62,6 +64,7 @@ saveRDS(pr, '450k_2021/combine/Methylformer_data/rna_pr.rds')
 
 pr <- prcomp(t(cb[int,]),scale=T)$x
 saveRDS(pr, '450k_2021/combine/Methylformer_data/array_promoter_pr.rds')
+
 
 
 
