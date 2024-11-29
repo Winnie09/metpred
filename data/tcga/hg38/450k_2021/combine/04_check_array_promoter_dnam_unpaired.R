@@ -16,7 +16,7 @@ arraycpg = rownames(array)
 ## intersect cpg
 int = intersect(wgbscpg, arraycpg) ##  chr [1:320132] "chr1_631826" "chr1_631932" 
 d = array[int, ]
-
+print(str(d))
 
 ## load in array's rna-seq samples
 ## find promoters
@@ -24,7 +24,10 @@ d = array[int, ]
 g <- readRDS(paste0('450k_2021/combine/Methylformer_data/ge.rds'))
 
 ## shuffle sample names, so that rnaseq and array have unpaired samples
-set.seed(1)
+seed = as.numeric(commandArgs(trailingOnly = T)[2])
+print(seed)
+
+set.seed(seed)
 sample <- sample(colnames(g))
 colnames(g) <- sample
 
@@ -35,8 +38,8 @@ gr <- GRanges(seqnames=gtf[,1],IRanges(start=gtf[,4],end=gtf[,5]),strand=gtf[,7]
 names(gr) <- gn
 
 pro <- promoters(gr,upstream=1000,downstream = 1000)
-seq <- sub(':.*','',rownames(d)) ## 
-pos <- as.numeric(sub('.*:','',rownames(d))) ## 
+seq <- sub('_.*','',rownames(d)) ## 
+pos <- as.numeric(sub('.*_','',rownames(d))) ## 
 
 dgr <- GRanges(seqnames=seq,IRanges(start=pos,end=pos+1))
 o <- as.data.frame(findOverlaps(dgr,pro))
@@ -52,7 +55,7 @@ sd1 <- apply(cb,1,sd)
 sd2 <- apply(g,1,sd)
 int <- which(sd1 > 0.1 & sd2 > 0.1)
 cv <- sapply(1:ncol(cb),function(i) cor(cb[int,i],g[int,i]))
-saveRDS(cv, '450k_2021/combine/Methylformer_data/unpaired_sample_cv.rds')
+saveRDS(cv, paste0('450k_2021/combine/Methylformer_data/cv_unpaired_sample_', seed, '.rds'))
 
 r <- sapply(1:ncol(cb),function(i1) {
   v <- sapply(1:ncol(cb),function(i2) {
@@ -60,5 +63,6 @@ r <- sapply(1:ncol(cb),function(i1) {
   }) 
   (v[i1]-mean(v[-i1]))/sd(v[-i1])
 })
-saveRDS(r, '450k_2021/combine/Methylformer_data/unpaired_sample_r.rds')
+saveRDS(r, paste0('450k_2021/combine/Methylformer_data/r_unpaired_sample_', seed, '.rds'))
+
 
