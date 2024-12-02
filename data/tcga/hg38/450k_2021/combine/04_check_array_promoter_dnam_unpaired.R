@@ -8,7 +8,6 @@ suppressMessages(library(GenomicRanges))
 wgbs <- readRDS(paste0('wgbs/combine/me_cpg_by_sample.rds'))  
 wgbscpg = rownames(wgbs)
 
-
 ## read in array data
 array = readRDS('450k_2021/combine/Methylformer_data/me_rownamesloc.rds')
 results <- vector("logical", nrow(array)) # Initialize an empty logical vector
@@ -19,9 +18,6 @@ for (i in seq(1, nrow(array), by = chunk_size)) {
 }
 str(results)
 array = array[results, ]
-
-
-
 
 arraycpg = rownames(array)
 
@@ -34,6 +30,7 @@ print(str(d))
 ## find promoters
 ## calculate promoter dnam
 g <- readRDS(paste0('450k_2021/combine/Methylformer_data/ge.rds'))
+rownames(g) = sub(';.*','', rownames(g))
 
 ## shuffle sample names, so that rnaseq and array have unpaired samples
 seed = as.numeric(commandArgs(trailingOnly = T)[2])
@@ -76,5 +73,7 @@ r <- sapply(1:ncol(cb),function(i1) {
   (v[i1]-mean(v[-i1]))/sd(v[-i1])
 })
 saveRDS(r, paste0('450k_2021/combine/Methylformer_data/r_unpaired_sample_', seed, '.rds'))
+
+
 
 
