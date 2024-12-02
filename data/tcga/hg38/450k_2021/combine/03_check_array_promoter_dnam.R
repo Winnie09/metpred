@@ -11,6 +11,19 @@ wgbscpg = rownames(wgbs)
 
 ## read in array data
 array = readRDS('450k_2021/combine/Methylformer_data/me_rownamesloc.rds')
+str(array)
+
+# array = array[complete.cases(array), ] #####
+results <- vector("logical", nrow(array)) # Initialize an empty logical vector
+chunk_size <- 10000 # Set an appropriate chunk size
+for (i in seq(1, nrow(array), by = chunk_size)) {
+  idx <- i:min(i + chunk_size - 1, nrow(array)) # Define the chunk
+  results[idx] <- complete.cases(array[idx, ])
+}
+str(results)
+array = array[results, ]
+
+str(array)
 arraycpg = rownames(array)
 
 ## intersect cpg
@@ -18,6 +31,12 @@ int = intersect(wgbscpg, arraycpg) ##  chr [1:320132] "chr1_631826" "chr1_631932
 str(int)
 d = array[int, ]
 str(d)
+ # chr [1:320132] "chr1_631826" "chr1_631932" "chr1_631968" "chr1_631978" ...
+ # num [1:320132, 1:8578] 0.151 0.114 0.1 0.196 0.663 ...
+ # - attr(*, "dimnames")=List of 2
+ #  ..$ : chr [1:320132] "chr1_631826" "chr1_631932" "chr1_631968" "chr1_631978" ...
+ #  ..$ : chr [1:8578] "TCGA-BK-A0CA-01" "TCGA-AX-A2HK-01" "TCGA-EY-A1GX-01" "TCGA-AW-A1PO-01" ...
+
 
 
 ## load in array's rna-seq samples
@@ -64,6 +83,8 @@ saveRDS(pr, '450k_2021/combine/Methylformer_data/rna_pr.rds')
 
 pr <- prcomp(t(cb[int,]),scale=T)$x
 saveRDS(pr, '450k_2021/combine/Methylformer_data/array_promoter_pr.rds')
+
+
 
 
 
