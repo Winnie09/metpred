@@ -11,6 +11,18 @@ wgbscpg = rownames(wgbs)
 
 ## read in array data
 array = readRDS('450k_2021/combine/Methylformer_data/me_rownamesloc.rds')
+results <- vector("logical", nrow(array)) # Initialize an empty logical vector
+chunk_size <- 10000 # Set an appropriate chunk size
+for (i in seq(1, nrow(array), by = chunk_size)) {
+  idx <- i:min(i + chunk_size - 1, nrow(array)) # Define the chunk
+  results[idx] <- complete.cases(array[idx, ])
+}
+str(results)
+array = array[results, ]
+
+
+
+
 arraycpg = rownames(array)
 
 ## intersect cpg
