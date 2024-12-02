@@ -43,6 +43,7 @@ str(d)
 ## find promoters
 ## calculate promoter dnam
 g <- readRDS(paste0('450k_2021/combine/Methylformer_data/ge.rds'))
+rownames(g) = sub(';.*','', rownames(g))
 gtf <- data.table::fread('/home/whou10/data/whou/resource/gtf/grch38.gtf',data.table=F)
 gtf <- gtf[gtf[,3]=='gene',]
 gn <- sub('".*','',sub('.*gene_name "','',gtf[,9]))
@@ -60,6 +61,9 @@ tab <- table(names(pro)[o[,2]])
 cb <- cb/as.vector(tab[rownames(cb)])
 
 int <- intersect(rownames(cb),rownames(g))
+str(int)
+# > str(int)
+#  chr [1:18511] "A1BG" "A1BG-AS1" "A2M" "A2M-AS1" "A2ML1" "A2MP1" "A4GALT" ...
 cb <- cb[int,]
 g <- g[int,]
 
@@ -79,13 +83,9 @@ saveRDS(r, '450k_2021/combine/Methylformer_data/r.rds')
 
 ## pca
 pr <- prcomp(t(g[int,]),scale=T)$x
-saveRDS(pr, '450k_2021/combine/Methylformer_data/rna_pr.rds')
+saveRDS(pr, '450k_2021/combine/Methylformer_data/array_rna_pr.rds')
 
 pr <- prcomp(t(cb[int,]),scale=T)$x
-saveRDS(pr, '450k_2021/combine/Methylformer_data/array_promoter_pr.rds')
-
-
-
-
+saveRDS(pr, '450k_2021/combine/Methylformer_data/array_promoterdnam_pr.rds')
 
 
