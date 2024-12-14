@@ -42,32 +42,32 @@ shelve <- GRanges(seqnames=shelve[,2],IRanges(start=shelve[,3],end=shelve[,4]))
 ## cpgname, cgi/upshore1/upshore2/upshore3/shore4/shelve/sea
 cpglocation <- function(cpg){
   o = as.matrix(findOverlaps(cgi, cpg))
-  d = data.frame(cpg = cpgname[o[,2]], location = 'cgi')
+  d = data.frame(cpg = cpgname[o[,2]], location = 'cgi', cgiIndex = o[,1])
   
   o = as.matrix(findOverlaps(upshore1, cpg))
   d = rbind(d,
-            data.frame(cpg = cpgname[o[,2]], location = 'upshore1'))
+            data.frame(cpg = cpgname[o[,2]], location = 'upshore1', cgiIndex = o[,1]))
   
   
   o = as.matrix(findOverlaps(upshore2, cpg))
   d = rbind(d,
-            data.frame(cpg = cpgname[o[,2]], location = 'upshore2'))
+            data.frame(cpg = cpgname[o[,2]], location = 'upshore2', cgiIndex = o[,1]))
   
   o = as.matrix(findOverlaps(upshore3, cpg))
   d = rbind(d,
-            data.frame(cpg = cpgname[o[,2]], location = 'upshore3'))
+            data.frame(cpg = cpgname[o[,2]], location = 'upshore3', cgiIndex = o[,1]))
   
   o = as.matrix(findOverlaps(upshore4, cpg))
   d = rbind(d,
-            data.frame(cpg = cpgname[o[,2]], location = 'upshore4'))
+            data.frame(cpg = cpgname[o[,2]], location = 'upshore4', cgiIndex = o[,1]))
   
   o = as.matrix(findOverlaps(shelve, cpg))
   d = rbind(d,
-            data.frame(cpg = cpgname[o[,2]], location = 'shelve'))
+            data.frame(cpg = cpgname[o[,2]], location = 'shelve', cgiIndex = o[,1]))
   
   cpgsea = setdiff(cpgname, unique(d[,1]))
   d = rbind(d,
-            data.frame(cpg = cpgsea, location = 'sea'))
+            data.frame(cpg = cpgsea, location = 'sea', cgiIndex = 0))
   return(d)
 }
 
@@ -76,10 +76,8 @@ cpgname = readRDS('/home/whou10/data/whou/metpred/data/tcga/hg38/wgbs/combine/cp
 seq = sub('_.*','',cpgname)
 pos = as.numeric(sub('.*_','',cpgname))
 cpg = GRanges(seqnames=seq,IRanges(start=pos,end=pos+1))
-
 res = cpglocation(cpg)
 write.table(res, '/home/whou10/data/whou/metpred/data/tcga/hg38/wgbs/combine/cpg_names_cgi_location.txt', quote = F)
-
 
 ## TCGA array
 cpgname = readRDS('/home/whou10/data/whou/metpred/data/tcga/hg38/450k_2021/combine/Methylformer_data/me_cpgnames.rds')
@@ -96,4 +94,5 @@ pos = as.numeric(sub('.*_','',cpgname))
 cpg = GRanges(seqnames=seq,IRanges(start=pos,end=pos+1))
 res = cpglocation(cpg)
 write.table(res, '/home/whou10/data/whou/metpred/data/encode_wgbs/processed/GRCh38_normal/Dreamland_data/cpg_names_cpg_location.txt', quote = F)
+
 
