@@ -67,7 +67,7 @@ cpglocation <- function(cpg){
   
   cpgsea = setdiff(cpgname, unique(d[,1]))
   d = rbind(d,
-            data.frame(cpg = cpgsea, location = 'sea', cgiIndex = 0))
+            data.frame(cpg = cpgsea, location = 'sea', cgiIndex = NA))
   return(d)
 }
 
