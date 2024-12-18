@@ -36,11 +36,13 @@ upshore3 <- GRanges(seqnames=upshore3[,2],IRanges(start=upshore3[,3],end=upshore
 upshore4 <- GRanges(seqnames=upshore4[,2],IRanges(start=upshore4[,3],end=upshore4[,4]))
 shelve <- GRanges(seqnames=shelve[,2],IRanges(start=shelve[,3],end=shelve[,4]))
 
+
+
 ## =========================================================
 ## identify CpG's location. Prepare a table of two columns:
 ## =========================================================
 ## cpgname, cgi/upshore1/upshore2/upshore3/shore4/shelve/sea
-cpglocation <- function(cpg){
+cpglocation <- function(cpg, cpgname){
   o = as.matrix(findOverlaps(cgi, cpg))
   d = data.frame(cpg = cpgname[o[,2]], location = 'cgi', cgiIndex = o[,1])
   
@@ -68,6 +70,8 @@ cpglocation <- function(cpg){
   cpgsea = setdiff(cpgname, unique(d[,1]))
   d = rbind(d,
             data.frame(cpg = cpgsea, location = 'sea', cgiIndex = NA))
+  d = d[!duplicated(d[,1]),]
+  d = d[match(names(cpg), d[,1]), ]
   return(d)
 }
 
@@ -76,7 +80,8 @@ cpgname = readRDS('/home/whou10/data/whou/metpred/data/tcga/hg38/wgbs/combine/cp
 seq = sub('_.*','',cpgname)
 pos = as.numeric(sub('.*_','',cpgname))
 cpg = GRanges(seqnames=seq,IRanges(start=pos,end=pos+1))
-res = cpglocation(cpg)
+names(cpg) = cpgname
+res = cpglocation(cpg, cpgname)
 write.table(res, '/home/whou10/data/whou/metpred/data/tcga/hg38/wgbs/combine/cpg_names_cgi_location.txt', quote = F)
 
 ## TCGA array
@@ -84,7 +89,8 @@ cpgname = readRDS('/home/whou10/data/whou/metpred/data/tcga/hg38/450k_2021/combi
 seq = sub('_.*','',cpgname)
 pos = as.numeric(sub('.*_','',cpgname))
 cpg = GRanges(seqnames=seq,IRanges(start=pos,end=pos+1))
-res = cpglocation(cpg)
+names(cpg) = cpgname
+res = cpglocation(cpg, cpgname)
 write.table(res, '/home/whou10/data/whou/metpred/data/tcga/hg38/450k_2021/combine/Methylformer_data/cpg_names_cpg_location.txt', quote = F)
 
 ## ENCODE WGBS
@@ -92,7 +98,7 @@ cpgname = readRDS('/home/whou10/data/whou/metpred/data/encode_wgbs/processed/GRC
 seq = sub('_.*','',cpgname)
 pos = as.numeric(sub('.*_','',cpgname))
 cpg = GRanges(seqnames=seq,IRanges(start=pos,end=pos+1))
-res = cpglocation(cpg)
+names(cpg) = cpgname
+res = cpglocation(cpg, cpgname))
 write.table(res, '/home/whou10/data/whou/metpred/data/encode_wgbs/processed/GRCh38_normal/Dreamland_data/cpg_names_cpg_location.txt', quote = F)
-
 
