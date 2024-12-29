@@ -70,28 +70,39 @@ cpglocation <- function(cpg, cpgname){
   cpgsea = setdiff(cpgname, unique(d[,1]))
   d = rbind(d,
             data.frame(cpg = cpgsea, location = 'sea', cgiIndex = NA))
-  d = d[!duplicated(d[,1]),]
+  # d = d[!duplicated(d[,1]),] ## remove duplicated CGI locations
   d = d[match(names(cpg), d[,1]), ]
   return(d)
 }
 
 ## TCGA WGBS
-cpgname = readRDS('/home/whou10/data/whou/metpred/data/tcga/hg38/wgbs/combine/cpg_names.rds')
+cpgname = readLines('/home/whou10/data/whou/metpred/data/tcga/hg38/2024/combine/wgbs_cpgnames.txt')
 seq = sub('_.*','',cpgname)
 pos = as.numeric(sub('.*_','',cpgname))
 cpg = GRanges(seqnames=seq,IRanges(start=pos,end=pos+1))
 names(cpg) = cpgname
 res = cpglocation(cpg, cpgname)
-write.table(res, '/home/whou10/data/whou/metpred/data/tcga/hg38/wgbs/combine/cpg_names_cgi_location.txt', quote = F)
+write.table(res, '/home/whou10/data/whou/metpred/data/tcga/hg38/2024/combine/wgbs_cpg_names_cgi_location.txt', quote = F, row.names = F)
+
+
+## TCGA EPIC
+cpgname = readLines('/home/whou10/data/whou/metpred/data/tcga/hg38/2024/combine/epic_cpgnames.txt')
+seq = sub('_.*','',cpgname)
+pos = as.numeric(sub('.*_','',cpgname))
+cpg = GRanges(seqnames=seq,IRanges(start=pos,end=pos+1))
+names(cpg) = cpgname
+res = cpglocation(cpg, cpgname)
+write.table(res, '/home/whou10/data/whou/metpred/data/tcga/hg38/2024/combine/epic_cpg_names_cgi_location.txt', quote = F, row.names = F)
 
 ## TCGA array
-cpgname = readRDS('/home/whou10/data/whou/metpred/data/tcga/hg38/450k_2021/combine/Methylformer_data/me_cpgnames.rds')
+cpgname = readLines('/home/whou10/data/whou/metpred/data/tcga/hg38/2024/combine/450k_cpgnames.txt')
 seq = sub('_.*','',cpgname)
 pos = as.numeric(sub('.*_','',cpgname))
 cpg = GRanges(seqnames=seq,IRanges(start=pos,end=pos+1))
 names(cpg) = cpgname
 res = cpglocation(cpg, cpgname)
-write.table(res, '/home/whou10/data/whou/metpred/data/tcga/hg38/450k_2021/combine/Methylformer_data/cpg_names_cpg_location.txt', quote = F)
+write.table(res, '/home/whou10/data/whou/metpred/data/tcga/hg38/2024/combine/450k_cpg_names_cgi_location.txt', quote = F, row.names = F)
+
 
 ## ENCODE WGBS
 cpgname = readRDS('/home/whou10/data/whou/metpred/data/encode_wgbs/processed/GRCh38_normal/Dreamland_data/me_cpgnames.rds')
@@ -99,6 +110,7 @@ seq = sub('_.*','',cpgname)
 pos = as.numeric(sub('.*_','',cpgname))
 cpg = GRanges(seqnames=seq,IRanges(start=pos,end=pos+1))
 names(cpg) = cpgname
-res = cpglocation(cpg, cpgname))
-write.table(res, '/home/whou10/data/whou/metpred/data/encode_wgbs/processed/GRCh38_normal/Dreamland_data/cpg_names_cpg_location.txt', quote = F)
+res = cpglocation(cpg, cpgname)
+write.table(res, '/home/whou10/data/whou/metpred/data/encode_wgbs/processed/GRCh38_normal/Dreamland_data/cpg_names_cpg_location.txt', quote = F, row.names = F)
+
 
