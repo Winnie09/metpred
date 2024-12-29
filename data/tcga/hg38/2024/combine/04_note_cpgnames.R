@@ -1,0 +1,23 @@
+setwd('/home/whou10/data/whou/metpred/data/tcga/hg38/2024/combine')
+array = readLines('450k_cpgnames.txt')
+epic = readLines('epic_cpgnames.txt')
+wgbs = readLines('wgbs_cpgnames.txt')
+
+str(intersect(array, wgbs))
+str(intersect(array, epic))
+str(intersect(wgbs, wgbs))
+
+diff1 = setdiff(array, epic)
+diff2 = setdiff(diff1, wgbs)
+mean(diff2 %in% epic)
+diff3 = setdiff(array, diff1)
+diff4 = setdiff(diff3, wgbs)
+diff5 = setdiff(diff3, diff4)
+diff6 = setdiff(diff1, diff2)
+write.table(sort(diff1), 'note1_cpgnames.txt', col.names = F, row.names = F, quote = F)
+write.table(sort(diff2), 'note2_cpgnames.txt', col.names = F, row.names = F, quote = F)
+write.table(sort(diff3), 'note3_cpgnames.txt', col.names = F, row.names = F, quote = F)
+write.table(sort(diff4), 'note4_cpgnames.txt', col.names = F, row.names = F, quote = F)
+write.table(sort(diff5), 'note5_cpgnames.txt', col.names = F, row.names = F, quote = F)
+write.table(sort(diff6), 'note6_cpgnames.txt', col.names = F, row.names = F, quote = F)
+
