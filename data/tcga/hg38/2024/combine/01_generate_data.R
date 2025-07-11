@@ -73,10 +73,10 @@ rownames(ge2) = paste0(gn, ';', gid)
 
 
 saveRDS(ge2, '/home/whou10/data/whou/metpred/data/tcga/hg38/2024/combine/ge.rds')
-write.csv(ge2, quote = F, file = '/home/whou10/data/whou/metpred/data/tcga/hg38/2024/combine/ge.csv')
-write.csv(d1, quote = F, file = '/home/whou10/data/whou/metpred/data/tcga/hg38/2024/combine/450k.csv')
-write.csv(d2, quote = F, file = '/home/whou10/data/whou/metpred/data/tcga/hg38/2024/combine/EPIC.csv')
-write.csv(d3, quote = F, file = '/home/whou10/data/whou/metpred/data/tcga/hg38/2024/combine/wgbs.csv')
+write.csv(ge2, quote = T, file = '/home/whou10/data/whou/metpred/data/tcga/hg38/2024/combine/ge.csv')
+write.csv(d1, quote = T, file = '/home/whou10/data/whou/metpred/data/tcga/hg38/2024/combine/450k.csv')
+write.csv(d2, quote = T, file = '/home/whou10/data/whou/metpred/data/tcga/hg38/2024/combine/EPIC.csv')
+write.csv(d3, quote = T, file = '/home/whou10/data/whou/metpred/data/tcga/hg38/2024/combine/wgbs.csv')
 
 
 
