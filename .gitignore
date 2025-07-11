@@ -2,4 +2,5 @@
 
 !.gitignore
 !*.R
+!*.sh
 !*/
