@@ -23,7 +23,7 @@ for (technology in c('450k', 'EPIC')){
   # (rows with no match will have NA in gene_names)
   
   # Write to CSV
-  write.csv(d_annot, file = paste0('/home/whou10/data/whou/metpred/data/tcga/hg38/2024/array/pos/', technology, '_with_promoter.csv'), row.names = FALSE, quote = FALSE)
+  write.csv(d_annot, file = paste0('/home/whou10/data/whou/metpred/data/tcga/hg38/2024/array/pos/', technology, '_cpgLocation_cpgNames_promoter.csv'), row.names = FALSE, quote = FALSE)
   
 }
 
